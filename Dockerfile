@@ -16,7 +16,7 @@ ENV UV_INDEX_URL=https://mirrors.huaweicloud.com/repository/pypi/simple \
 COPY pyproject.toml uv.lock* ./
 
 # 使用 uv 同步依赖（会自动读取 UV_INDEX_URL）
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --index-url https://mirrors.huaweicloud.com/repository/pypi/simple --no-dev
 
 # 复制项目代码
 COPY . .
