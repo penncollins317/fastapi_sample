@@ -5,13 +5,13 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # 安装 uv（比 pip 快很多）
-RUN pip install --no-cache-dir uv
+RUN pip install --no-cache-dir uv -i https://mirrors.huaweicloud.com/repository/pypi/simple
 
 # 复制依赖文件（假设有 pyproject.toml 和 uv.lock）
 COPY pyproject.toml uv.lock* ./
 
 # 安装依赖（使用 uv）
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --index-url https://mirrors.huaweicloud.com/repository/pypi/simple
 
 # 复制项目代码
 COPY . .
