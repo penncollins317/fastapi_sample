@@ -2,6 +2,8 @@ services:
   web:
     build: .
     restart: unless-stopped
+    entrypoint:
+      DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
     ports:
       - "8000:8000"
     depends_on:
