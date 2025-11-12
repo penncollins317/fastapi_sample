@@ -36,7 +36,7 @@ async def real_ip_middleware(request: Request, call_next):
 
 @app.get("/")
 async def get_id(request: Request) -> str:
-    return request.client.host
+    return f"<h2>{request.client.host}</h2>"
 
 
 if __name__ == '__main__':
