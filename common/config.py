@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 APP_ENV = os.getenv("APP_ENV", "development")
 
-if APP_ENV in ("development", "test"):
+if APP_ENV:
     env_file = f".env.{APP_ENV}"
     if os.path.exists(env_file):
         print(f"Loading environment from {env_file}")
