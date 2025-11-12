@@ -3,8 +3,8 @@ services:
     build: .
     restart: unless-stopped
     entrypoint:
-      DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/fastapi_app
-      SYNC_DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/fastapi_app
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/fastapi_app
+      - SYNC_DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/fastapi_app
     ports:
       - "8000:8000"
     depends_on:
