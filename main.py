@@ -23,6 +23,17 @@ from user_service import get_router
 app.include_router(get_router())
 
 
+@app.middleware("http")
+async def real_ip_middleware(request: Request, call_next):
+    forwarded_for = request.headers.get("x-forwarded-for")
+    if forwarded_for:
+        real_ip = forwarded_for.split(",")[0].strip()
+        scope = request.scope
+        scope["client"] = (real_ip, scope["client"][1])
+    response = await call_next(request)
+    return response
+
+
 @app.get("/")
 async def get_id(request: Request) -> str:
     return request.client.host
