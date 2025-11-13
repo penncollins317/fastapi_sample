@@ -10,6 +10,7 @@ dependencies = [
     "langchain>=1.0.5",
     "langchain-deepseek>=1.0.0",
     "orjson>=3.11.4",
+    "passlib[argon2]>=1.7.4",
     "psycopg2-binary>=2.9.11",
     "pydantic[email]>=2.12.4",
     "pyjwt>=2.10.1",

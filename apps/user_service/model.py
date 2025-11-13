@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, BigInteger, ForeignKey
+from sqlalchemy import Column, String, BigInteger, ForeignKey, func, DateTime
 
 from common.db import Base
 
@@ -14,6 +14,14 @@ class User(Base):
 
 
 class UserAccount(Base):
-    __tablename__ = "t_user_account"
+    __tablename__ = "user_account"
     user_id = Column(BigInteger, ForeignKey("t_user.id"))
     email = Column(String(120), unique=True)
+
+
+class UserLoginLog(Base):
+    __tablename__ = "user_login_log"
+
+    user_id = Column(BigInteger, ForeignKey("t_user.id"))
+    ip_addr = Column(String(39))
+    login_time = Column(DateTime, server_default=func.now())

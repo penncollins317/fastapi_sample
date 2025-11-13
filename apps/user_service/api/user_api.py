@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 
 @router.post("/register", summary="用户注册")
-async def user_register(params: UserRegisterParams = Body()) -> int:
+async def user_register_endpoint(params: UserRegisterParams = Body()) -> int:
     return await UserService.register(params)
 
 
@@ -22,7 +22,7 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 
 # 支持的图片类型
 @router.post("/avatar/upload", summary="头像上传")
-async def upload_avatar(file: UploadFile = File(...), current_user: TokenUser = Depends(get_current_user)) -> bool:
+async def upload_avatar_endpoint(file: UploadFile = File(...), current_user: TokenUser = Depends(get_current_user)) -> bool:
     if file.content_type not in ALLOWED_IMAGE_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -35,11 +35,11 @@ async def upload_avatar(file: UploadFile = File(...), current_user: TokenUser = 
 
 
 @router.get("/me")
-async def read_users_me(current_user: TokenUser = Depends(get_current_user)) -> UserInfo:
+async def read_users_me_endpoint(current_user: TokenUser = Depends(get_current_user)) -> UserInfo:
     return await UserService.get_user(user_id=current_user.user_id)
 
 
 @router.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> TokenDTO:
+async def login_endpoint(form_data: OAuth2PasswordRequestForm = Depends()) -> TokenDTO:
     token = await UserService.login(form_data.username, form_data.password)
     return token

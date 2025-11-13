@@ -1,3 +1,4 @@
+from datetime import datetime, UTC
 from typing import Optional
 
 from sqlalchemy.future import select
@@ -5,7 +6,7 @@ from sqlalchemy.future import select
 from common.db import async_session
 from common.exceptions import ServiceException
 from common.jwt_utils import create_full_token
-from user_service.model import User
+from user_service.model import User, UserLoginLog
 from user_service.schemas import TokenDTO, UserRegisterParams, UserInfo
 
 
@@ -33,6 +34,7 @@ class UserService:
                 'sub': str(user.id),
                 'email': user.email
             })
+            UserLoginLog(user_id=user.id, login_time=datetime.now(UTC))
             return token
 
     @staticmethod
