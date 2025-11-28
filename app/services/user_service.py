@@ -1,13 +1,15 @@
-from datetime import datetime, UTC
+from datetime import datetime
 from typing import Optional
 
+from fastapi import Request
 from sqlalchemy.future import select
 
-from common.db import async_session
+from app.core.db import async_session
+from app.models.user_model import User, UserLoginLog
+from app.schemas.user_schema import TokenDTO, UserRegisterParams, UserInfo
 from common.exceptions import ServiceException
 from common.jwt_utils import create_full_token
-from user_service.model import User, UserLoginLog
-from user_service.schemas import TokenDTO, UserRegisterParams, UserInfo
+from common.passwd import password_helper
 
 
 class UserService:
@@ -18,23 +20,25 @@ class UserService:
             existing_user = result.scalar_one_or_none()
             if existing_user:
                 raise ServiceException("该邮箱已注册，请直接登录。")
-            user = User(name=params.name, email=params.email, password=params.password)
+            user = User(name=params.name, email=params.email, password=password_helper.hash_password(params.password))
             session.add(user)
             await session.commit()
             await session.refresh(user)
             return user.id
 
     @staticmethod
-    async def login(username: str, password: str) -> TokenDTO:
+    async def login(username: str, password: str, request: Request) -> TokenDTO:
         async with async_session() as session:
             user = (await session.execute(select(User).where(User.email == username))).scalar_one_or_none()
-            if not user or user.password != password:
+            if not user or not password_helper.verify_password(password, user.password):
                 raise ServiceException("账号或密码错误")
             token = create_full_token({
                 'sub': str(user.id),
                 'email': user.email
             })
-            UserLoginLog(user_id=user.id, login_time=datetime.now(UTC))
+            login_log = UserLoginLog(user_id=user.id, login_time=datetime.now(), ip_addr=request.client.host)
+            session.add(login_log)
+            await session.commit()
             return token
 
     @staticmethod

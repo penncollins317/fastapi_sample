@@ -3,7 +3,7 @@ import logging.config
 import os
 
 
-def setup_logging():
+def init_logging():
     LOGGING_CONFIG = {
         "version": 1,
         "disable_existing_loggers": False,

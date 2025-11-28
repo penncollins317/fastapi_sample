@@ -5,7 +5,7 @@ from typing import Literal
 
 import jwt
 
-from user_service.schemas import TokenDTO
+from app.schemas import TokenDTO
 
 JWT_SECRET = os.environ.get("JWT_SECRET", uuid.uuid4().__str__())
 JWT_ISSUER = os.environ.get("JWT_ISSUER", "http://localhost:8000")

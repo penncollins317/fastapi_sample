@@ -4,6 +4,10 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 
+class TokenUser(BaseModel):
+    user_id: int
+
+
 class UserInfo(BaseModel):
     id: int
     name: str

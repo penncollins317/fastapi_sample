@@ -44,10 +44,10 @@ class PasswordHelper:
         return verified, new_hash
 
 
-helper = PasswordHelper()
+password_helper = PasswordHelper()
 
 if __name__ == "__main__":
-    hashed = helper.hash_password("admin123")
+    hashed = password_helper.hash_password("admin123")
     print("argon2 哈希:", hashed)
-    print("验证正确密码:", helper.verify_password("admin123", hashed))
-    print("验证错误密码:", helper.verify_password("wrong", hashed))
+    print("验证正确密码:", password_helper.verify_password("admin123", hashed))
+    print("验证错误密码:", password_helper.verify_password("wrong", hashed))

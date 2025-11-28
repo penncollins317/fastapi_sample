@@ -1,7 +1,10 @@
 from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 
+from app.schemas import TokenUser
 from common import jwt_utils
-from common.scheme import TokenUser, oauth2_scheme
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/oauth2/login")
 
 
 def fake_decode_token(token) -> TokenUser:

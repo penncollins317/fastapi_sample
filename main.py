@@ -1,37 +1,32 @@
 import logging
-import os
-import sys
 
 from dotenv import load_dotenv
-
-load_dotenv()
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "apps"))
-
-from common.logging_config import setup_logging
-
-setup_logging()
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from common.encoder import CustomJSONResponse
+from common.logging_config import init_logging
+
+load_dotenv()
+init_logging()
 
 _logger = logging.getLogger(__name__)
+
 app = FastAPI(default_response_class=CustomJSONResponse)
+from app.routers.chat_router import router as chat_router
+from app.routers.user_router import router as user_router
 
-from user_service import get_router
-
-app.include_router(get_router())
-
-
-@app.middleware("http")
-async def real_ip_middleware(request: Request, call_next):
-    forwarded_for = request.headers.get("x-forwarded-for")
-    if forwarded_for:
-        real_ip = forwarded_for.split(",")[0].strip()
-        scope = request.scope
-        scope["client"] = (real_ip, scope["client"][1])
-    response = await call_next(request)
-    return response
+app.include_router(chat_router)
+app.include_router(user_router)
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -42,4 +37,4 @@ async def get_id(request: Request) -> str:
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run("main:app", host='0.0.0.0', port=8000, reload=True)
