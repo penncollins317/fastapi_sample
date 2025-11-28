@@ -1,8 +1,11 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from typing import List
+
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Body
 
 from app.core.depends import get_current_user
 from app.core.socket_manager import manager
 from app.schemas import TokenUser
+from app.services.chat_service import conversation_list, create_conversation
 from schemas import UserInfo
 
 router = APIRouter(tags=["即时通信"])
@@ -18,6 +21,17 @@ async def online_users(token_user: TokenUser = Depends(get_current_user)) -> lis
             avatar_url=""
         )
     ]
+
+
+@router.get("/chat/conversations", summary='会话列表')
+async def list_conversation_route(token_user: TokenUser = Depends(get_current_user)) -> List[dict]:
+    return await conversation_list(token_user.user_id)
+
+
+@router.post("/chat/conversations", summary='创建会话')
+async def create_conversation_route(token_user: TokenUser = Depends(get_current_user),
+                                    with_users: List[int] = Body()) -> int:
+    return await create_conversation(token_user.user_id, with_users)
 
 
 @router.websocket("/websocket/chat")

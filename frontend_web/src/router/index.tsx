@@ -4,6 +4,7 @@ import LoginScreen from '../pages/login'
 import RegisterScreen from '../pages/register'
 import HomeScreen from '../pages/home'
 import MeetingRoomPage from '../pages/meet/MeetingRoomPage'
+import UserProfile from '../pages/user/UserProfile'
 
 const router = createHashRouter([
     {
@@ -26,6 +27,10 @@ const router = createHashRouter([
         path: '/register',
         element: <RegisterScreen />,
     },
+    {
+        path: '/user/me',
+        element: <UserProfile />
+    }
 ])
 
 export default router

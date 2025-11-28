@@ -1,10 +1,13 @@
 import { loginApi, registerApi, userinfoApi } from "../api"
 import type { LoginParams, RegisterParams, RegisterResponse, UserinfoDTO } from "../types/user"
+import { createAsyncCache } from "../utils/cache"
 
 
 class AuthService {
-    async getUserinfo(): Promise<UserinfoDTO> {
-        return await userinfoApi()
+    private userinfoCache = createAsyncCache<UserinfoDTO>(userinfoApi)
+
+    async getUserinfo(force = false): Promise<UserinfoDTO> {
+        return await this.userinfoCache.get(force)
     }
     async login(params: LoginParams) {
         const res = await loginApi(params)

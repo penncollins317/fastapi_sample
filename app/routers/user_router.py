@@ -1,6 +1,7 @@
 import logging
+from typing import List, Optional
 
-from fastapi import HTTPException, Body, UploadFile, status, File, Depends, Request, APIRouter
+from fastapi import HTTPException, Body, UploadFile, status, File, Depends, Request, APIRouter, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
@@ -40,12 +41,12 @@ async def upload_avatar_endpoint(file: UploadFile = File(...),
     return True
 
 
-@router.get("/me")
+@router.get("/me", summary="我的信息")
 async def read_users_me_endpoint(current_user: TokenUser = Depends(get_current_user)) -> UserInfo:
     return await UserService.get_user(user_id=current_user.user_id)
 
 
-@router.post("/oauth2/login")
+@router.post("/oauth2/login", summary="OAuth2登录")
 async def oauth2_login_endpoint(request: Request, form_data: OAuth2PasswordRequestForm = Depends()) -> TokenDTO:
     token = await UserService.login(form_data.username, form_data.password, request)
     return token
@@ -56,7 +57,12 @@ class UserLoginParams(BaseModel):
     password: str
 
 
-@router.post("/login")
+@router.post("/login", summary="用户登录")
 async def login_endpoint(request: Request, data: UserLoginParams = Body()) -> TokenDTO:
     token = await UserService.login(data.username, data.password, request)
     return token
+
+
+@router.get("/search", summary="搜索用户")
+async def search_user_route(keyword: Optional[str] = Query(default=None)) -> List[UserInfo]:
+    return await UserService.list_users()

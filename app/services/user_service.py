@@ -69,3 +69,9 @@ class UserService:
         async with async_session() as session:
             result = await session.execute(select(User))
             return result.scalars().all()
+
+register = UserService.register
+login = UserService.login
+list_users = UserService.list_users
+get_user = UserService.get_user
+create_user = UserService.create_user
